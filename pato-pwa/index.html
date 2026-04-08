@@ -8,16 +8,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Lembretes">
-<title>Pato & Crawd</title>
+<title>Pato Lembretes</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@600;700;800&display=swap');
-:root {
-  --bg:#1a1209; --surface:#231a0d; --card:#2a1f0f; --border:#3d2e18;
-  --accent:#D4674A; --accent2:#f0a060; --blue:#5bc8e8;
-  --green:#6deca0; --red:#ff5c5c; --yellow:#f5d76e;
-  --text:#f0e8d8; --muted:#8a7a60;
+:root{
+  --bg:#1a1209;--surface:#231a0d;--card:#2a1f0f;--border:#3d2e18;
+  --accent:#D4674A;--accent2:#f0a060;--blue:#5bc8e8;
+  --green:#6deca0;--red:#ff5c5c;--yellow:#f5d76e;
+  --text:#f0e8d8;--muted:#8a7a60;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
@@ -26,18 +26,19 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 canvas{image-rendering:pixelated;display:block;}
 
 /* HEADER */
-.header{background:var(--surface);border-bottom:4px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.header{background:var(--surface);border-bottom:4px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .header-title{font-family:'Press Start 2P',monospace;font-size:0.55rem;color:var(--accent);line-height:1.7;}
-.header-title span{color:var(--blue);}
+.coins-display{display:flex;align-items:center;gap:4px;background:var(--card);border:2px solid var(--yellow);padding:3px 8px;font-family:'Press Start 2P',monospace;font-size:0.45rem;color:var(--yellow);}
 .header-count{margin-left:auto;background:var(--accent);color:white;font-family:'Press Start 2P',monospace;font-size:0.45rem;padding:4px 8px;box-shadow:3px 3px 0 rgba(0,0,0,0.4);}
+.skin-btn{background:var(--surface);border:2px solid var(--border);color:var(--text);font-family:'Press Start 2P',monospace;font-size:0.4rem;padding:4px 8px;cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,0.4);}
+.skin-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,0.4);}
 
 /* MASCOT */
 .mascot-area{background:var(--surface);border-bottom:4px solid var(--border);padding:10px 14px;display:flex;align-items:flex-end;gap:10px;flex-shrink:0;min-height:86px;}
-.mascot-canvas-wrap{flex-shrink:0;cursor:pointer;}
+.mascot-canvas-wrap{flex-shrink:0;cursor:pointer;position:relative;}
 .mascot-canvas-wrap canvas{width:60px;height:60px;image-rendering:pixelated;}
 .speech-wrap{flex:1;display:flex;flex-direction:column;gap:2px;}
 .speaker-name{font-family:'Press Start 2P',monospace;font-size:0.42rem;color:var(--accent);margin-bottom:4px;}
-.speaker-name.blue{color:var(--blue);}
 .speech-box{background:var(--card);border:3px solid var(--border);padding:8px 10px;font-size:0.78rem;line-height:1.5;color:var(--text);position:relative;box-shadow:3px 3px 0 rgba(0,0,0,0.4);min-height:40px;display:flex;align-items:center;}
 .speech-box::before{content:'';position:absolute;left:-12px;bottom:10px;border:6px solid transparent;border-right-color:var(--border);}
 .speech-box::after{content:'';position:absolute;left:-8px;bottom:12px;border:4px solid transparent;border-right-color:var(--card);}
@@ -62,13 +63,14 @@ textarea.pixel-input{resize:none;height:50px;font-size:0.78rem;width:100%;}
 
 .pixel-btn{font-family:'Press Start 2P',monospace;font-size:0.48rem;padding:10px 12px;border:none;cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,0.5);transition:transform 0.05s,box-shadow 0.05s;-webkit-appearance:none;border-radius:0;white-space:nowrap;line-height:1.6;}
 .pixel-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(0,0,0,0.5);}
-.pixel-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 rgba(0,0,0,0.5);}
+.pixel-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
 .btn-add{background:var(--accent);color:white;}
 .btn-yes{background:var(--green);color:#0a2010;}
 .btn-no{background:var(--red);color:white;}
 .btn-confirm{background:var(--blue);color:#001a26;}
 .btn-photo{background:var(--yellow);color:#1a1000;}
 .btn-wide{width:100%;text-align:center;}
+.btn-coin{background:var(--yellow);color:#1a1000;}
 
 /* TASK CARD */
 .section-label{font-family:'Press Start 2P',monospace;font-size:0.4rem;color:var(--muted);letter-spacing:1px;padding:2px 0;}
@@ -109,53 +111,53 @@ textarea.pixel-input{resize:none;height:50px;font-size:0.78rem;width:100%;}
 .modal-input::placeholder{color:var(--muted);}
 .modal-btns{display:flex;gap:8px;flex-wrap:wrap;}
 .modal-btns .pixel-btn{flex:1;text-align:center;min-width:80px;}
-
-/* PHOTO (optional) */
 .photo-area{display:none;flex-direction:column;gap:8px;margin-bottom:12px;}
 .photo-area.show{display:flex;}
 .photo-preview{width:100%;max-height:140px;object-fit:cover;border:3px solid var(--border);display:none;}
 .photo-preview.show{display:block;}
 .photo-status{font-size:0.74rem;color:var(--muted);text-align:center;}
-.photo-optional-label{font-size:0.72rem;color:var(--muted);text-align:center;margin-bottom:4px;}
-
-/* VERDICT */
 .verdict-box{border:3px solid var(--border);padding:10px;margin-bottom:12px;display:none;}
 .verdict-box.show{display:block;}
 .verdict-box.approved{border-color:var(--green);}
 .verdict-box.rejected{border-color:var(--red);}
 .verdict-icon{font-size:1.4rem;text-align:center;margin-bottom:4px;}
 .verdict-text{font-size:0.76rem;line-height:1.5;text-align:center;white-space:pre-line;}
-
-/* PROGRESS */
 .progress-wrap{margin-bottom:12px;display:none;}
 .progress-wrap.show{display:block;}
 .progress-label{font-family:'Press Start 2P',monospace;font-size:0.38rem;color:var(--muted);margin-bottom:4px;}
 .progress-bar{height:8px;background:var(--border);}
 .progress-fill{height:100%;background:var(--blue);transition:width 0.3s ease;}
-
-/* LOADING */
 .loading-dots{display:inline-flex;gap:4px;}
 .loading-dots span{width:6px;height:6px;background:var(--blue);display:inline-block;animation:dotB 1s ease infinite;}
 .loading-dots span:nth-child(2){animation-delay:0.15s;}
 .loading-dots span:nth-child(3){animation-delay:0.3s;}
 @keyframes dotB{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
-
-/* SPEEDRUN */
-.speedrun-banner{background:var(--yellow);color:#1a1000;padding:8px 12px;font-size:0.76rem;font-weight:800;text-align:center;display:none;border-bottom:3px solid #a07800;flex-shrink:0;line-height:1.5;}
-.speedrun-banner.show{display:block;}
-
-/* STRIKES */
 .strikes-bar{font-family:'Press Start 2P',monospace;font-size:0.42rem;text-align:center;margin-bottom:10px;display:none;}
 .strikes-bar.show{display:block;}
 .strike-dot{display:inline-block;width:10px;height:10px;margin:0 3px;background:var(--border);}
 .strike-dot.hit{background:var(--red);}
 
-/* INSTALL */
+/* COIN POP */
+.coin-pop{position:fixed;font-family:'Press Start 2P',monospace;font-size:0.6rem;color:var(--yellow);pointer-events:none;z-index:700;animation:coinUp 1.2s ease forwards;text-shadow:1px 1px 0 rgba(0,0,0,0.5);}
+@keyframes coinUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-60px) scale(1.3);}}
+
+/* SKINS MODAL */
+.skins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.skin-card{background:var(--card);border:3px solid var(--border);padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:border-color 0.15s;}
+.skin-card.active{border-color:var(--green);}
+.skin-card.locked-skin{opacity:0.6;cursor:default;}
+.skin-card canvas{width:40px;height:40px;image-rendering:pixelated;}
+.skin-label{font-family:'Press Start 2P',monospace;font-size:0.32rem;color:var(--text);text-align:center;line-height:1.6;}
+.skin-price{font-family:'Press Start 2P',monospace;font-size:0.3rem;color:var(--yellow);}
+.skin-unlocked-badge{font-size:0.55rem;}
+
+/* SPEEDRUN */
+.speedrun-banner{background:var(--yellow);color:#1a1000;padding:8px 12px;font-size:0.76rem;font-weight:800;text-align:center;display:none;border-bottom:3px solid #a07800;flex-shrink:0;line-height:1.5;}
+.speedrun-banner.show{display:block;}
 .install-banner{background:var(--accent);color:white;padding:8px 14px;display:none;align-items:center;justify-content:space-between;gap:8px;font-size:0.76rem;font-weight:800;flex-shrink:0;}
 .install-banner.show{display:flex;}
 .install-banner button{font-family:'Press Start 2P',monospace;font-size:0.38rem;background:white;color:var(--accent);border:none;padding:6px 10px;cursor:pointer;}
 .install-banner .close-banner{background:transparent;color:white;box-shadow:none;font-family:sans-serif;font-size:1rem;}
-
 .confetti{position:fixed;width:8px;height:8px;pointer-events:none;z-index:600;animation:cfall 1s ease forwards;}
 @keyframes cfall{from{transform:translateY(0) rotate(0);opacity:1;}to{transform:translateY(180px) rotate(540deg);opacity:0;}}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
@@ -173,7 +175,9 @@ textarea.pixel-input{resize:none;height:50px;font-size:0.78rem;width:100%;}
 
 <div class="header">
   <canvas id="headerIcon" width="27" height="24" style="width:27px;height:24px"></canvas>
-  <div class="header-title">PATO &<br><span>CRAWD</span></div>
+  <div class="header-title">PATO</div>
+  <div class="coins-display">🪙 <span id="coinsDisplay">0</span></div>
+  <button class="skin-btn" onclick="openSkins()">🎨 SKINS</button>
   <div class="header-count" id="headerCount">0 tasks</div>
 </div>
 
@@ -183,7 +187,7 @@ textarea.pixel-input{resize:none;height:50px;font-size:0.78rem;width:100%;}
   </div>
   <div class="speech-wrap">
     <div class="speaker-name" id="speakerName">PATO</div>
-    <div class="speech-box" id="speechBox">Oi! Coloca o contexto da tarefa — quanto mais detalhe, mais difícil pra enganar a gente! 👀</div>
+    <div class="speech-box" id="speechBox">Oi! Adiciona uma tarefa. Complete tarefas pra ganhar 🪙 e desbloquear skins!</div>
   </div>
 </div>
 
@@ -194,8 +198,8 @@ textarea.pixel-input{resize:none;height:50px;font-size:0.78rem;width:100%;}
       <input class="pixel-input" id="taskInput" type="text" placeholder="O que precisa fazer?" maxlength="80" autocomplete="off"/>
       <button class="pixel-btn btn-add" onclick="addTask()">ADD</button>
     </div>
-    <div class="hint-label">💡 Contexto detalhado (mais detalhe = interrogatório mais difícil!):</div>
-    <textarea class="pixel-input" id="hintInput" placeholder="Ex: varrer o chão, organizar a escrivaninha, dobrar as roupas da cadeira..."></textarea>
+    <div class="hint-label">💡 Contexto (mais detalhe = interrogatório mais difícil!):</div>
+    <textarea class="pixel-input" id="hintInput" placeholder="Ex: varrer o chão, organizar a escrivaninha..."></textarea>
     <div class="timer-row">
       <span class="timer-label">⏱️ Tempo mínimo:</span>
       <input class="pixel-input timer-input" id="timerInput" type="number" min="0" max="999" value="0"/>
@@ -206,7 +210,7 @@ textarea.pixel-input{resize:none;height:50px;font-size:0.78rem;width:100%;}
   <div id="taskList"></div>
 </div>
 
-<!-- MODAL -->
+<!-- INTERROGATION MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modal">
     <div class="modal-mascots" id="modalMascots"></div>
@@ -218,7 +222,7 @@ textarea.pixel-input{resize:none;height:50px;font-size:0.78rem;width:100%;}
     <div class="modal-title" id="modalTitle"></div>
     <div class="modal-sub" id="modalSub"></div>
     <div class="photo-area" id="photoArea">
-      <div class="photo-optional-label">📸 Foto como prova (opcional, mas ajuda!)</div>
+      <div style="font-size:0.72rem;color:var(--muted);text-align:center;margin-bottom:4px;">📸 Foto como prova (opcional)</div>
       <button class="pixel-btn btn-photo btn-wide" onclick="triggerPhoto()">TIRAR FOTO</button>
       <input type="file" id="photoFile" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)"/>
       <img id="photoPreview" class="photo-preview" alt="prova"/>
@@ -233,35 +237,243 @@ textarea.pixel-input{resize:none;height:50px;font-size:0.78rem;width:100%;}
   </div>
 </div>
 
-<script>
-// ====== PIXEL ART ======
-const CRAWD_GRID=[[0,0,1,1,1,1,1,0,0],[0,1,1,1,1,1,1,1,0],[1,1,2,1,1,1,2,1,1],[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],[0,1,1,1,1,1,1,1,0],[0,1,0,1,0,1,0,1,0],[0,1,0,1,0,1,0,1,0]];
-const DUCK_GRID=[[0,0,0,1,1,1,0,0,0],[0,0,1,1,2,1,1,0,0],[0,3,1,1,1,1,1,0,0],[0,0,1,1,1,1,1,0,0],[0,1,1,1,1,1,1,1,0],[1,1,1,1,1,1,1,1,1],[0,1,1,1,1,1,1,1,0],[0,4,4,0,0,4,4,0,0]];
-const CC={1:'#D4674A',2:'#0f0f1a'};
-const DC={1:'#FFD700',2:'#111',3:'#FF6B35',4:'#FF6B35'};
+<!-- SKINS MODAL -->
+<div class="modal-overlay" id="skinsOverlay">
+  <div class="modal" id="skinsModal" style="max-width:400px;">
+    <div style="font-family:'Press Start 2P',monospace;font-size:0.55rem;color:var(--yellow);text-align:center;margin-bottom:4px;">🎨 SKINS DO PATO</div>
+    <div style="font-size:0.72rem;color:var(--muted);text-align:center;margin-bottom:14px;">Complete tarefas pra ganhar 🪙 e desbloquear skins!</div>
+    <div class="skins-grid" id="skinsGrid"></div>
+    <div class="modal-btns">
+      <button class="pixel-btn btn-no btn-wide" onclick="closeSkins()">FECHAR</button>
+    </div>
+  </div>
+</div>
 
+<script>
+// ====== PIXEL ART ENGINE ======
 function drawPixel(canvas,grid,colors,scale){
   const R=grid.length,C=grid[0].length;
   canvas.width=C*scale;canvas.height=R*scale;
   const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let r=0;r<R;r++)for(let c=0;c<C;c++){if(!grid[r][c])continue;ctx.fillStyle=colors[grid[r][c]]||'#fff';ctx.fillRect(c*scale,r*scale,scale,scale);}
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){
+    if(!grid[r][c])continue;
+    const v=grid[r][c];
+    ctx.fillStyle=(typeof colors[v]==='function'?colors[v]():colors[v])||'#fff';
+    ctx.fillRect(c*scale,r*scale,scale,scale);
+  }
 }
-drawPixel(document.getElementById('headerIcon'),CRAWD_GRID,CC,3);
-function setMascot(t){const cv=document.getElementById('mascotCanvas');drawPixel(cv,t==='crawd'?CRAWD_GRID:DUCK_GRID,t==='crawd'?CC:DC,4);cv.style.width='60px';cv.style.height='60px';}
-setMascot('duck');
-function setSpeech(type,name,text){setMascot(type);document.getElementById('speakerName').textContent=name;document.getElementById('speakerName').className='speaker-name'+(type==='crawd'?' blue':'');document.getElementById('speechBox').textContent=text;}
-document.getElementById('mascotWrap').addEventListener('click',()=>{
-  const q=[['duck','PATO','Para de me cutucar! Vai fazer suas tarefas! 🦆'],['crawd','CRAWD','Clicou em mim. Suas tarefas não acham isso engraçado.'],['duck','PATO','QUACK! Isso foi raiva. Vai trabalhar!'],['crawd','CRAWD','Improdutivo detectado. Registrado no sistema.']];
-  const[t,n,txt]=rand(q);setSpeech(t,n,txt);
-});
+
+// BASE DUCK GRID (0=transparent,1=body,2=eye,3=bill,4=feet,5=wing,6=accessory)
+const BASE_DUCK=[
+  [0,0,0,1,1,1,0,0,0],
+  [0,0,1,1,2,1,1,0,0],
+  [0,3,1,1,1,1,1,0,0],
+  [0,0,1,1,1,1,1,0,0],
+  [0,1,1,1,1,1,1,1,0],
+  [1,1,1,1,1,1,1,1,1],
+  [0,1,1,1,1,1,1,1,0],
+  [0,4,4,0,0,4,4,0,0],
+];
+
+// ====== SKINS DEFINITION ======
+// Each skin: { id, name, colors, accessory, price, unlockAt (tasks), free }
+const SKINS = [
+  {
+    id:'default', name:'CLÁSSICO', price:0, free:true,
+    colors:{1:'#FFD700',2:'#111',3:'#FF6B35',4:'#FF6B35'},
+    desc:'O original!'
+  },
+  {
+    id:'blue', name:'AZULZÃO', price:0, free:true,
+    colors:{1:'#5bc8e8',2:'#111',3:'#2980b9',4:'#2980b9'},
+    desc:'Grátis!'
+  },
+  {
+    id:'pink', name:'ROSINHA', price:15, free:false,
+    colors:{1:'#ff9eb5',2:'#111',3:'#e84393',4:'#e84393'},
+    desc:'🪙 15'
+  },
+  {
+    id:'green', name:'VERDÃO', price:15, free:false,
+    colors:{1:'#6deca0',2:'#111',3:'#27ae60',4:'#27ae60'},
+    desc:'🪙 15'
+  },
+  {
+    id:'purple', name:'ROXÃO', price:20, free:false,
+    colors:{1:'#c39bd3',2:'#111',3:'#8e44ad',4:'#8e44ad'},
+    desc:'🪙 20'
+  },
+  {
+    id:'red', name:'VERMELHO', price:20, free:false,
+    colors:{1:'#ff5c5c',2:'#111',3:'#c0392b',4:'#c0392b'},
+    desc:'🪙 20'
+  },
+  {
+    id:'ninja', name:'NINJA', price:30, free:false,
+    colors:{1:'#2c2c2c',2:'#ff5c5c',3:'#111',4:'#111'},
+    desc:'🪙 30',
+    hat: [[0,1,1,1,1,1,0],[1,1,1,1,1,1,1]], hatColor:'#111', hatOffset:[-2,1]
+  },
+  {
+    id:'astronaut', name:'ASTRO', price:40, free:false,
+    colors:{1:'#f0e8d8',2:'#5bc8e8',3:'#aaa',4:'#aaa'},
+    desc:'🪙 40',
+    helmet: true
+  },
+  {
+    id:'hacker', name:'HACKER', price:35, free:false,
+    colors:{1:'#1a1a1a',2:'#6deca0',3:'#333',4:'#333'},
+    desc:'🪙 35',
+    glow:'#6deca0'
+  },
+  {
+    id:'golden', name:'OURO', price:0, unlockAt:10, free:false,
+    colors:{1:'#f5d76e',2:'#8B6914',3:'#DAA520',4:'#DAA520'},
+    desc:'🏆 10 tarefas'
+  },
+  {
+    id:'rainbow', name:'ARCO-ÍRIS', price:0, unlockAt:25, free:false,
+    colors:{1:'#FFD700',2:'#111',3:'#FF6B35',4:'#FF6B35'},
+    desc:'🌈 25 tarefas', rainbow:true
+  },
+  {
+    id:'party', name:'FESTIVO', price:50, free:false,
+    colors:{1:'#f5d76e',2:'#111',3:'#FF6B35',4:'#FF6B35'},
+    desc:'🪙 50',
+    party:true
+  },
+];
+
+let rainbowHue = 0;
+setInterval(()=>{rainbowHue=(rainbowHue+5)%360;},100);
+
+function getSkinColors(skin){
+  if(skin.rainbow){
+    return {
+      1:`hsl(${rainbowHue},100%,60%)`,
+      2:'#111',
+      3:`hsl(${(rainbowHue+120)%360},100%,50%)`,
+      4:`hsl(${(rainbowHue+120)%360},100%,50%)`
+    };
+  }
+  return skin.colors;
+}
+
+function drawDuckWithSkin(canvas, skin, scale){
+  const colors = getSkinColors(skin);
+  drawPixel(canvas, BASE_DUCK, colors, scale);
+  const ctx = canvas.getContext('2d');
+
+  // Astronaut helmet overlay
+  if(skin.helmet){
+    ctx.fillStyle='rgba(91,200,232,0.4)';
+    ctx.fillRect(2*scale, 0, 5*scale, 4*scale);
+    ctx.strokeStyle='#aaa';
+    ctx.lineWidth=scale*0.5;
+    ctx.strokeRect(2*scale, 0, 5*scale, 4*scale);
+  }
+
+  // Ninja headband
+  if(skin.id==='ninja'){
+    ctx.fillStyle='#cc0000';
+    ctx.fillRect(1*scale, 2*scale, 7*scale, scale);
+  }
+
+  // Hacker glow
+  if(skin.glow){
+    ctx.shadowBlur=scale*3;
+    ctx.shadowColor=skin.glow;
+    ctx.fillStyle=skin.glow;
+    ctx.fillRect(0,0,0,0); // trigger shadow
+    ctx.shadowBlur=0;
+  }
+
+  // Party hat
+  if(skin.party){
+    ctx.fillStyle='#ff5c5c';
+    ctx.beginPath();
+    ctx.moveTo(4*scale,0);
+    ctx.lineTo(2*scale,3*scale);
+    ctx.lineTo(6*scale,3*scale);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle='#f5d76e';
+    ctx.fillRect(3*scale,0,scale,scale);
+  }
+
+  // Golden crown
+  if(skin.id==='golden'){
+    ctx.fillStyle='#DAA520';
+    for(let i=0;i<3;i++){
+      ctx.fillRect((2+i*1.5)*scale, -scale, scale*0.8, scale*1.5);
+    }
+  }
+}
 
 // ====== STATE ======
-let tasks=JSON.parse(localStorage.getItem('pato_v4')||'[]');
+let tasks=JSON.parse(localStorage.getItem('pato_v5')||'[]');
+let gameState=JSON.parse(localStorage.getItem('pato_game')||'{"coins":0,"unlockedSkins":["default","blue"],"activeSkin":"default","completedTotal":0}');
 let pendingId=null,modalStep=0,quizData=[],currentQ=0,strikes=0,maxStrikes=2,photoBase64=null,hasPhoto=false;
 
-function save(){localStorage.setItem('pato_v4',JSON.stringify(tasks));}
+function save(){localStorage.setItem('pato_v5',JSON.stringify(tasks));}
+function saveGame(){localStorage.setItem('pato_game',JSON.stringify(gameState));}
 function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function getActiveSkin(){return SKINS.find(s=>s.id===gameState.activeSkin)||SKINS[0];}
+
+// ====== RENDER DUCK ======
+function renderDuck(canvas, scale=4){
+  drawDuckWithSkin(canvas, getActiveSkin(), scale);
+  canvas.style.width=(canvas.width/scale*scale)+'px';
+  canvas.style.height=(canvas.height/scale*scale)+'px';
+}
+
+function refreshAllDucks(){
+  const mc=document.getElementById('mascotCanvas');
+  drawDuckWithSkin(mc, getActiveSkin(), 4);
+  mc.style.width='60px';mc.style.height='60px';
+  drawDuckWithSkin(document.getElementById('headerIcon'), getActiveSkin(), 3);
+}
+
+// Init mascot
+refreshAllDucks();
+
+function setSpeech(name,text){
+  refreshAllDucks();
+  document.getElementById('speakerName').textContent=name;
+  document.getElementById('speechBox').textContent=text;
+}
+
+document.getElementById('mascotWrap').addEventListener('click',()=>{
+  const q=[
+    'Para de me cutucar! Vai fazer suas tarefas! 🦆',
+    'QUACK! Isso foi raiva. Vai trabalhar!',
+    'Oi. Ainda esperando você fazer alguma coisa. 👁️',
+    'Cada clique aqui é um segundo sem produtividade. Quack.',
+    'Você sabia que completar tarefas dá moedinhas? 🪙 Vai lá!',
+  ];
+  setSpeech('PATO', rand(q));
+});
+
+// ====== COINS ======
+function addCoins(n, x, y){
+  gameState.coins+=n;
+  saveGame();
+  document.getElementById('coinsDisplay').textContent=gameState.coins;
+  // Pop animation
+  const el=document.createElement('div');
+  el.className='coin-pop';
+  el.textContent='+'+n+'🪙';
+  el.style.left=(x||window.innerWidth/2)+'px';
+  el.style.top=(y||200)+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1300);
+}
+
+function updateCoinsDisplay(){
+  document.getElementById('coinsDisplay').textContent=gameState.coins;
+}
 
 // ====== TIMER ======
 function elapsed(task){return(Date.now()-task.createdAt)/60000;}
@@ -279,20 +491,25 @@ setInterval(()=>{
   });
 },10000);
 
-// ====== ADD ======
+// ====== ADD TASK ======
 function addTask(){
   const name=document.getElementById('taskInput').value.trim();
   const hint=document.getElementById('hintInput').value.trim();
   const mins=parseInt(document.getElementById('timerInput').value)||0;
-  if(!name){document.getElementById('taskInput').classList.add('shake');setTimeout(()=>document.getElementById('taskInput').classList.remove('shake'),400);setSpeech('duck','PATO','Quack?? Esqueceu de escrever a tarefa! 🦆');return;}
+  if(!name){
+    document.getElementById('taskInput').classList.add('shake');
+    setTimeout(()=>document.getElementById('taskInput').classList.remove('shake'),400);
+    setSpeech('PATO','Quack?? Esqueceu de escrever a tarefa! 🦆');
+    return;
+  }
   tasks.unshift({id:Date.now(),name,hint,done:false,createdAt:Date.now(),minMinutes:mins});
   save();
   document.getElementById('taskInput').value='';
   document.getElementById('hintInput').value='';
   document.getElementById('timerInput').value='0';
   render();
-  if(mins>0)setSpeech('crawd','CRAWD',`"${name}" bloqueada por ${mins}min. Sem trapacear. 🦀`);
-  else setSpeech('duck','PATO',`"${name}" na lista! Agora vai lá fazer! 🦆`);
+  if(mins>0)setSpeech('PATO',`"${name}" bloqueada por ${mins}min. Sem trapacear! ⏱️`);
+  else setSpeech('PATO',`"${name}" adicionada! Vai lá fazer, quack! 🦆`);
 }
 document.getElementById('taskInput').addEventListener('keydown',e=>{if(e.key==='Enter')addTask();});
 
@@ -302,7 +519,7 @@ function render(){
   const pending=tasks.filter(t=>!t.done).length;
   document.getElementById('headerCount').textContent=pending+' task'+(pending!==1?'s':'');
   list.innerHTML='';
-  if(!tasks.length){list.innerHTML='<div class="empty"><div class="empty-pixel">[ SEM TAREFAS ]</div>O Pato tá entediado.<br>Adiciona algo aí em cima!</div>';return;}
+  if(!tasks.length){list.innerHTML='<div class="empty"><div class="empty-pixel">[ SEM TAREFAS ]</div>O Pato tá entediado.<br>Adiciona algo aí em cima! 🦆</div>';return;}
   tasks.forEach(task=>{
     const ok=unlocked(task);
     const card=document.createElement('div');
@@ -323,15 +540,15 @@ function render(){
     list.appendChild(card);
   });
 }
-function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);save();render();setSpeech('duck','PATO','Removida. Espero que tenha um bom motivo... 🦆');}
+function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);save();render();setSpeech('PATO','Removida. Espero que tenha um bom motivo... 🦆');}
 
 // ====== TRY COMPLETE ======
-const SPEEDRUN=['🏃 Isso foi MUITO rápido... você é speedrunner ou já tava feito?','⚡ Menos de 2 minutos?! Suspeito. Muito suspeito.','🦆 QUACK DE SUSPEITA! Interrogatório especial ativado!','🦀 Velocidade anormal detectada. Modo severo ON.'];
+const SPEEDRUN=['🏃 Isso foi rápido... speedrunner de tarefas?','⚡ Menos de 2 minutos?! Suspeito.','🦆 QUACK DE SUSPEITA! Interrogatório ativado!'];
 function tryComplete(id){
   const task=tasks.find(t=>t.id===id);
   if(!task||task.done)return;
   if(!unlocked(task)){
-    setSpeech('crawd','CRAWD',`Ainda faltam ${fmtTime(remaining(task))} pra liberar essa. SEM TRAPACEAR. 🦀`);
+    setSpeech('PATO',`Ainda faltam ${fmtTime(remaining(task))} pra liberar essa. Sem trapacear! 🦆`);
     document.getElementById('crd-'+id).classList.add('shake');
     setTimeout(()=>document.getElementById('crd-'+id).classList.remove('shake'),400);
     return;
@@ -342,16 +559,17 @@ function tryComplete(id){
 }
 
 // ====== MODAL HELPERS ======
-function buildMascots(both){
+function buildModalDuck(){
   const w=document.getElementById('modalMascots');w.innerHTML='';
-  const make=(g,c)=>{const cv=document.createElement('canvas');drawPixel(cv,g,c,4);cv.style.width='50px';cv.style.height='50px';w.appendChild(cv);};
-  if(both){make(DUCK_GRID,DC);make(CRAWD_GRID,CC);}else if(Math.random()>0.5)make(DUCK_GRID,DC);else make(CRAWD_GRID,CC);
+  const cv=document.createElement('canvas');
+  drawDuckWithSkin(cv,getActiveSkin(),4);
+  cv.style.width='50px';cv.style.height='50px';
+  w.appendChild(cv);
 }
 function setBorder(c){document.getElementById('modal').style.borderColor=c||'var(--accent)';}
 function showProg(cur,tot){document.getElementById('progressWrap').classList.add('show');document.getElementById('progressLabel').textContent=`PERGUNTA ${cur} DE ${tot}`;document.getElementById('progressFill').style.width=((cur/tot)*100)+'%';}
 function updateStrikes(){
   const bar=document.getElementById('strikesBar');
-  if(maxStrikes<=0){bar.classList.remove('show');return;}
   bar.classList.add('show');
   let html='';
   for(let i=0;i<maxStrikes;i++)html+=`<span class="strike-dot${i<strikes?' hit':''}"></span>`;
@@ -370,40 +588,30 @@ function resetModal(){
   setBorder();
 }
 
-// ====== STEP 1: CONFIRM ======
+// ====== CONFIRM ======
 function showConfirm(task){
-  modalStep=1;resetModal();buildMascots(false);
+  modalStep=1;resetModal();buildModalDuck();
   document.getElementById('modalTitle').textContent=rand([`Você REALMENTE fez\n"${task.name}"?`,`Hm... "${task.name}"\ntá feita mesmo?`,`Concluiu\n"${task.name}"?`]);
-  document.getElementById('modalSub').textContent='O Crawd vai precisar de provas. Prepare-se.';
+  document.getElementById('modalSub').textContent='O Pato vai precisar verificar. Prepare-se! 🦆';
   document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-yes" onclick="startInterrogation()">SIM, FIZ ✓</button><button class="pixel-btn btn-no" onclick="closeModal()">AINDA NÃO</button>`;
   document.getElementById('modalOverlay').classList.add('open');
 }
 
-// ====== STEP 2: PHOTO (OPTIONAL) + GENERATE QUESTIONS ======
+// ====== INTERROGATION ======
 async function startInterrogation(){
   const task=tasks.find(t=>t.id===pendingId);
-  modalStep=2;resetModal();buildMascots(true);setBorder('var(--blue)');
-  document.getElementById('modalTitle').textContent='GERANDO\nINTERROGATÓRIO...';
-  document.getElementById('modalSub').innerHTML='A IA está criando perguntas impossíveis\nde responder sem ter feito a tarefa...<br><br><span class="loading-dots"><span></span><span></span><span></span></span>';
+  modalStep=2;resetModal();buildModalDuck();setBorder('var(--blue)');
+  document.getElementById('modalTitle').textContent='GERANDO\nPERGUNTAS...';
+  document.getElementById('modalSub').innerHTML='A IA tá criando perguntas específicas...<br><br><span class="loading-dots"><span></span><span></span><span></span></span>';
   document.getElementById('photoArea').classList.add('show');
-  document.getElementById('modalBtns').innerHTML='';
-
-  // Generate questions while user optionally takes photo
-  let questions=null;
-  const qPromise=generateQuestionsAI(task);
-
-  // Show photo button while loading
-  document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-photo" onclick="triggerPhoto()" id="photoBtn">📸 FOTO (opcional)</button>`;
-
-  questions=await qPromise;
+  document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-photo" onclick="triggerPhoto()">📸 FOTO (opcional)</button>`;
+  const questions=await generateQuestionsAI(task);
   quizData=questions;
-
   document.getElementById('modalTitle').textContent='FOTO OPCIONAL';
-  document.getElementById('modalSub').textContent=`Pode tirar uma foto como prova se quiser.\nNão é obrigatório, mas ajuda.`;
+  document.getElementById('modalSub').textContent='Pode tirar uma foto como prova se quiser!';
   document.getElementById('modalBtns').innerHTML=`
-    <button class="pixel-btn btn-confirm" onclick="beginQuiz()">PULAR FOTO ▶</button>
-    <button class="pixel-btn btn-photo" onclick="triggerPhoto()">📸 TIRAR FOTO</button>
-  `;
+    <button class="pixel-btn btn-confirm" onclick="beginQuiz()">PULAR ▶</button>
+    <button class="pixel-btn btn-photo" onclick="triggerPhoto()">📸 FOTO</button>`;
 }
 
 function triggerPhoto(){document.getElementById('photoFile').click();}
@@ -414,236 +622,170 @@ function handlePhoto(e){
     photoBase64=ev.target.result.split(',')[1];
     document.getElementById('photoPreview').src=ev.target.result;
     document.getElementById('photoPreview').classList.add('show');
-    document.getElementById('photoStatus').textContent='✅ Foto adicionada como prova!';
+    document.getElementById('photoStatus').textContent='✅ Foto adicionada!';
     hasPhoto=true;
     document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-confirm btn-wide" onclick="beginQuiz()">CONTINUAR ▶</button>`;
   };
   reader.readAsDataURL(file);
 }
 
-// ====== AI QUESTION GENERATION ======
 async function generateQuestionsAI(task){
   try{
-    const resp=await fetch('/.netlify/functions/claude',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'llama-3.3-70b-versatile',
-        max_tokens:500,
-        system:`Você é o Crawd, um caranguejo pixel art extremamente desconfiado e rigoroso. Sua missão é criar perguntas que APENAS alguém que realmente fez a tarefa consegue responder corretamente. As perguntas devem ser sobre detalhes concretos e observáveis da tarefa — coisas que não dá pra inventar sem ter feito. Evite perguntas sobre sentimentos, opiniões ou coisas que qualquer um pode chutar. Foque em detalhes físicos, sensoriais, sequenciais.
-
-Responda SOMENTE com JSON válido sem markdown:
-{
-  "perguntas": [
-    {"id":1,"pergunta":"pergunta concreta e específica","placeholder":"dica do formato esperado","dificuldade":"alta"},
-    {"id":2,"pergunta":"outra pergunta igualmente difícil de inventar","placeholder":"dica","dificuldade":"alta"},
-    {"id":3,"pergunta":"terceira pergunta de verificação","placeholder":"dica","dificuldade":"media"}
-  ]
-}
-
-Exemplos de BOAS perguntas (difíceis de enganar):
-- "Limpar quarto": "O que estava em cima da sua cama antes de você arrumar?" / "Qual foi a primeira coisa que você jogou fora?" / "Quanto pó acumulou no pano quando você limpou a escrivaninha?"
-- "Lavar louça": "Qual foi o último utensílio que você lavou?" / "A esponja estava nova ou velha?" / "A água estava fria ou quente?"
-- "Estudar": "Qual foi o último tópico que você leu?" / "Você fez anotações? Em que página parou?"
-
-Exemplos de PERGUNTAS RUINS (fáceis de enganar):
-- "Como você se sentiu?" (opinião)
-- "Foi difícil?" (subjetivo)
-- "O quarto ficou limpo?" (óbvio)`,
-        messages:[{role:'user',content:`Crie 3 perguntas de verificação para: "${task.name}"\nContexto fornecido pelo usuário: "${task.hint||'nenhum contexto'}"\n\nAs perguntas devem ser impossíveis de responder sem ter feito a tarefa. Use o contexto para ser ainda mais específico.`}]
-      })
-    });
+    const resp=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      model:'llama-3.3-70b-versatile',max_tokens:500,
+      system:`Crie 3 perguntas de verificação para saber se alguém realmente fez uma tarefa. As perguntas devem ser sobre detalhes concretos que só quem fez saberia. Foque em detalhes físicos, sensoriais ou sequenciais específicos. Responda SOMENTE em JSON válido sem markdown: {"perguntas":[{"id":1,"pergunta":"pergunta específica","placeholder":"dica","dificuldade":"alta"},{"id":2,"pergunta":"...","placeholder":"...","dificuldade":"alta"},{"id":3,"pergunta":"...","placeholder":"...","dificuldade":"media"}]}`,
+      messages:[{role:'user',content:`Tarefa: "${task.name}"\nContexto: "${task.hint||'nenhum'}"`}]
+    })});
     const data=await resp.json();
     const raw=data.content?.map(i=>i.text||'').join('')||'';
     const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
     return result.perguntas;
   }catch(err){
-    // Fallback questions
     return[
-      {id:1,pergunta:`Descreva um detalhe específico que você notou enquanto fazia "${task.name}"`,placeholder:'Seja específico...',dificuldade:'alta'},
-      {id:2,pergunta:'Qual foi a parte mais trabalhosa? Descreva o que exatamente você fez nela.',placeholder:'Seja detalhado...',dificuldade:'alta'},
-      {id:3,pergunta:'Se você tivesse que fazer de novo, o que faria diferente e por quê?',placeholder:'Pense antes de responder...',dificuldade:'media'},
+      {id:1,pergunta:`Descreva um detalhe específico que você notou fazendo "${task.name}"`,placeholder:'Seja específico...',dificuldade:'alta'},
+      {id:2,pergunta:'Qual foi a parte mais trabalhosa? O que exatamente você fez?',placeholder:'Detalhe...',dificuldade:'alta'},
+      {id:3,pergunta:'Quanto tempo levou e teve algum imprevisto?',placeholder:'Tempo e detalhes...',dificuldade:'media'},
     ];
   }
 }
 
-// ====== QUIZ ======
-function beginQuiz(){
-  resetModal();buildMascots(true);setBorder('var(--blue)');
-  currentQ=0;strikes=0;
-  showQuestion(0);
-}
+function beginQuiz(){resetModal();buildModalDuck();setBorder('var(--blue)');strikes=0;showQuestion(0);}
 
 function showQuestion(idx){
   if(idx>=quizData.length){runFinalVerdict();return;}
-  resetModal();buildMascots(true);setBorder('var(--blue)');
-  showProg(idx+1,quizData.length);
-  updateStrikes();
+  resetModal();buildModalDuck();setBorder('var(--blue)');
+  showProg(idx+1,quizData.length);updateStrikes();
   const q=quizData[idx];
   document.getElementById('modalTitle').textContent=q.pergunta;
-  document.getElementById('modalSub').textContent=strikes===0?'Pense direito antes de responder. Sem inventar.':'⚠️ Cuidado — resposta suspeita detectada antes!';
+  document.getElementById('modalSub').textContent='Responda com detalhes reais. 🦆';
   const inp=document.getElementById('modalInput');
   inp.style.display='block';inp.placeholder=q.placeholder||'Sua resposta...';inp.value='';
   setTimeout(()=>inp.focus(),100);
-  document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-confirm btn-wide" id="answerBtn" onclick="submitAnswer(${idx})">RESPONDER ▶</button>`;
+  document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-confirm btn-wide" id="ansBtn" onclick="submitAnswer(${idx})">RESPONDER ▶</button>`;
 }
 
 async function submitAnswer(idx){
   const ans=document.getElementById('modalInput').value.trim();
-  if(!ans||ans.length<3){
-    document.getElementById('modalInput').classList.add('shake');
-    setTimeout(()=>document.getElementById('modalInput').classList.remove('shake'),400);
-    return;
-  }
-
-  // Disable button while checking
-  const btn=document.getElementById('answerBtn');
-  if(btn){btn.disabled=true;btn.textContent='CHECANDO...';}
-
+  if(!ans||ans.length<3){document.getElementById('modalInput').classList.add('shake');setTimeout(()=>document.getElementById('modalInput').classList.remove('shake'),400);return;}
+  const btn=document.getElementById('ansBtn');if(btn){btn.disabled=true;btn.textContent='CHECANDO...';}
   const task=tasks.find(t=>t.id===pendingId);
-  const result=await checkAnswerAI(task,quizData[idx].pergunta,ans,idx);
-
+  const result=await checkAnswerAI(task,quizData[idx].pergunta,ans);
   if(result.suspeito){
-    strikes++;
-    updateStrikes();
-    if(strikes>=maxStrikes){
-      // Failed — too many suspicious answers
-      showRejected(task,result.comentario,'Muitas respostas suspeitas. Parece que não foi feita mesmo...');
-      return;
-    }
-    // Warn and let retry
-    resetModal();buildMascots(true);setBorder('var(--red)');
-    showProg(idx+1,quizData.length);
-    updateStrikes();
-    document.getElementById('modalTitle').textContent='RESPOSTA SUSPEITA!';
+    strikes++;updateStrikes();
+    if(strikes>=maxStrikes){showRejected(task,result.comentario,'Muitas respostas suspeitas. Tenta de verdade!');return;}
+    resetModal();buildModalDuck();setBorder('var(--red)');
+    showProg(idx+1,quizData.length);updateStrikes();
+    document.getElementById('modalTitle').textContent='HMMMM...';
     document.getElementById('modalSub').textContent=result.comentario;
     document.getElementById('verdictBox').classList.add('show','rejected');
     document.getElementById('verdictIcon').textContent='🤨';
-    document.getElementById('verdictText').textContent=`"${ans}"\n\n${result.motivo}`;
-    document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-confirm btn-wide" onclick="retryQuestion(${idx})">TENTAR DE NOVO ▶</button>`;
+    document.getElementById('verdictText').textContent=result.motivo;
+    document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-confirm btn-wide" onclick="retryQ(${idx})">TENTAR DE NOVO</button>`;
   }else{
-    quizData[idx].resposta=ans;
-    showQuestion(idx+1);
+    quizData[idx].resposta=ans;showQuestion(idx+1);
   }
 }
+function retryQ(idx){showQuestion(idx);}
 
-function retryQuestion(idx){
-  showQuestion(idx);
-}
-
-// ====== AI: CHECK ANSWER ======
-async function checkAnswerAI(task,question,answer,qIdx){
+async function checkAnswerAI(task,question,answer){
   try{
-    const resp=await fetch('/.netlify/functions/claude',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'llama-3.3-70b-versatile',
-        max_tokens:200,
-        system:`Você é o Crawd, um caranguejo desconfiado mas justo. Você só reprova respostas que são CLARAMENTE impossíveis ou absurdas — não é pra ser carrasco, é pra pegar quem tá obviamente enrolando.
-
-DÊ BENEFÍCIO DA DÚVIDA. Respostas simples, curtas ou sem muito detalhe ainda podem ser verdadeiras. Pessoas reais não descrevem tudo em detalhes.
-
-REPROVE apenas se a resposta for:
-- Fisicamente impossível para a tarefa (ex: "programei a meia", "kernel da roupa", "usei magia")
-- Completamente sem relação com a tarefa (tarefa=lavar roupa, resposta=joguei bola)
-- Claramente uma piada ou tentativa de enganar com nonsense
-
-APROVE se a resposta:
-- Faz sentido no mundo real para essa tarefa, mesmo que simples
-- É curta mas plausível (ex: "estava quente", "usei detergente", "demorou uns 10 min")
-- Não contradiz a tarefa de forma óbvia
-
-Responda SOMENTE em JSON válido sem markdown:
-{"suspeito":true/false,"comentario":"comentário curto e bem-humorado do Crawd (max 90 chars)","motivo":"motivo breve (max 90 chars)"}`,
-        messages:[{role:'user',content:`Tarefa do mundo real: "${task.name}"\nContexto: "${task.hint||'nenhum'}"\nPergunta: "${question}"\nResposta do usuário: "${answer}"\n\nEssa resposta é fisicamente possível e coerente com a tarefa? Ou é absurda/inventada?`}]
-      })
-    });
+    const resp=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      model:'llama-3.3-70b-versatile',max_tokens:200,
+      system:`Você é o Pato, desconfiado mas justo. Verifique se a resposta é plausível para a tarefa. Dê benefício da dúvida — só reprove se for claramente impossível ou absurdo (ex: "programei a meia", "usei magia"). Respostas simples mas coerentes devem passar. Responda SOMENTE em JSON válido sem markdown: {"suspeito":true/false,"comentario":"comentário bem-humorado (max 80 chars)","motivo":"motivo breve (max 80 chars)"}`,
+      messages:[{role:'user',content:`Tarefa: "${task.name}"\nContexto: "${task.hint||'nenhum'}"\nPergunta: "${question}"\nResposta: "${answer}"\nÉ plausível?`}]
+    })});
     const data=await resp.json();
     const raw=data.content?.map(i=>i.text||'').join('')||'';
     return JSON.parse(raw.replace(/```json|```/g,'').trim());
-  }catch(err){
-    // If API fails, accept the answer
-    return{suspeito:false,comentario:'IA offline — aceitando no benefício da dúvida.',motivo:'Erro de conexão.'};
-  }
+  }catch(err){return{suspeito:false,comentario:'',motivo:''};}
 }
 
-// ====== FINAL VERDICT ======
 async function runFinalVerdict(){
   const task=tasks.find(t=>t.id===pendingId);
-  resetModal();buildMascots(true);setBorder('var(--yellow)');
+  resetModal();buildModalDuck();setBorder('var(--yellow)');
   document.getElementById('modalTitle').textContent='JULGAMENTO\nFINAL';
-  document.getElementById('modalSub').innerHTML='IA analisando tudo em conjunto...<br><span class="loading-dots"><span></span><span></span><span></span></span>';
-
+  document.getElementById('modalSub').innerHTML='Analisando...<span class="loading-dots"><span></span><span></span><span></span></span>';
   const answersText=quizData.map((q,i)=>`P${i+1}: ${q.pergunta}\nR: ${q.resposta||'(sem resposta)'}`).join('\n\n');
-
   try{
-    const resp=await fetch('/.netlify/functions/claude',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'llama-3.3-70b-versatile',
-        max_tokens:300,
-        system:`Você é o Pato e o Crawd fazendo o julgamento final. Vocês são desconfiados mas justos — não são carrascos, só querem ter certeza que a tarefa foi feita de verdade.
-
-CRITÉRIO: As respostas fazem sentido para essa tarefa no mundo real? São plausíveis de alguém que realmente fez?
-
-APROVE se as respostas:
-- São coerentes com a tarefa, mesmo que simples ou sem muito detalhe
-- Formam uma narrativa plausível de quem fez a tarefa
-- Não têm contradições graves
-
-REPROVE apenas se as respostas:
-- Forem claramente absurdas ou impossíveis (kernel de meia, magia, etc)
-- Contradizerem a tarefa de forma óbvia
-- Forem completamente aleatórias e sem relação
-
-${hasPhoto?'O usuário enviou foto como prova — isso conta bastante a favor.':''}
-
-Na dúvida, APROVE. Seja engraçado mas gentil na reação.
-
-Responda SOMENTE em JSON válido sem markdown:
-{"aprovado":true/false,"veredicto":"frase engraçada e bem-humorada do Pato+Crawd (max 100 chars)","resumo":"resumo breve (max 100 chars)"}`,
-        messages:[{role:'user',content:`Tarefa: "${task.name}"\nContexto: "${task.hint||'nenhum'}"\nFoto enviada: ${hasPhoto?'SIM':'NÃO'}\nErros cometidos: ${strikes}/${maxStrikes}\n\nRespostas:\n${answersText}\n\nA pessoa realmente fez a tarefa?`}]
-      })
-    });
+    const resp=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      model:'llama-3.3-70b-versatile',max_tokens:250,
+      system:`Você é o Pato fazendo o julgamento final. Seja justo e bem-humorado. Aprove se as respostas fazem sentido para a tarefa, mesmo que simples. Reprove só se forem claramente absurdas ou impossíveis. ${hasPhoto?'Foto enviada — conta positivamente!':''} Na dúvida, aprove. Responda SOMENTE em JSON válido sem markdown: {"aprovado":true/false,"veredicto":"frase engraçada do Pato (max 100 chars)","resumo":"resumo breve (max 80 chars)"}`,
+      messages:[{role:'user',content:`Tarefa: "${task.name}"\nContexto: "${task.hint||'nenhum'}"\nFoto: ${hasPhoto?'SIM':'NÃO'}\nErros: ${strikes}/${maxStrikes}\n\n${answersText}`}]
+    })});
     const data=await resp.json();
     const raw=data.content?.map(i=>i.text||'').join('')||'';
     const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
     if(result.aprovado)showApproved(task,result.veredicto,result.resumo);
     else showRejected(task,result.veredicto,result.resumo);
-  }catch(err){
-    showApproved(task,'IA offline — desta vez você passa.','Erro de conexão. Benefício da dúvida.');
-  }
+  }catch(err){showApproved(task,'IA offline — desta vez você passa. 🦆','Benefício da dúvida concedido.');}
 }
 
 function showApproved(task,veredicto,resumo){
-  resetModal();buildMascots(true);setBorder('var(--green)');
+  resetModal();buildModalDuck();setBorder('var(--green)');
   document.getElementById('verdictBox').classList.add('show','approved');
   document.getElementById('verdictIcon').textContent='🏆';
   document.getElementById('verdictText').textContent=veredicto+'\n\n'+resumo;
   document.getElementById('modalTitle').textContent='APROVADO!';
   document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-yes btn-wide" onclick="finalComplete()">CONCLUIR ✓</button>`;
-  // Clear photo from memory
   photoBase64=null;
 }
 
 function showRejected(task,veredicto,resumo){
-  resetModal();buildMascots(true);setBorder('var(--red)');
+  resetModal();buildModalDuck();setBorder('var(--red)');
   document.getElementById('verdictBox').classList.add('show','rejected');
   document.getElementById('verdictIcon').textContent='🚫';
   document.getElementById('verdictText').textContent=veredicto+'\n\n'+resumo;
   document.getElementById('modalTitle').textContent='REPROVADO!';
-  document.getElementById('modalSub').textContent='Volta lá e faz de verdade. O Crawd sabe quando você mente.';
-  document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-no btn-wide" onclick="closeModal()">VOLTAR E FAZER 😤</button>`;
-  setSpeech('crawd','CRAWD',veredicto.substring(0,60)+'...');
+  document.getElementById('modalSub').textContent='Volta lá e faz de verdade. 🦆';
+  document.getElementById('modalBtns').innerHTML=`<button class="pixel-btn btn-no btn-wide" onclick="closeModal()">VOLTAR 😤</button>`;
+  setSpeech('PATO',veredicto.substring(0,60));
   photoBase64=null;
 }
 
 function finalComplete(){
   const task=tasks.find(t=>t.id===pendingId);
-  task.done=true;save();closeModal();render();confetti();
-  setSpeech(...rand([['duck','PATO',`QUACK DE APROVAÇÃO! "${task.name}" CONCLUÍDA! 🏆🦆`],['crawd','CRAWD',`VALIDAÇÃO COMPLETA. Resistiu ao interrogatório. Respeito. 🦀`],['duck','PATO','Passou por tudo! Orgulho de pato! 🦆✨']]));
+  task.done=true;save();
+  gameState.completedTotal=(gameState.completedTotal||0)+1;
+
+  // Coins reward
+  const coinsEarned = 5 + (task.minMinutes>0?5:0) + (hasPhoto?3:0);
+  gameState.coins+=coinsEarned;
+
+  // Check task-unlock skins
+  checkSkinUnlocks();
+  saveGame();
+  updateCoinsDisplay();
+
+  closeModal();render();confetti();
+
+  // Coin pop
+  setTimeout(()=>{
+    const el=document.createElement('div');
+    el.className='coin-pop';
+    el.textContent='+'+coinsEarned+'🪙';
+    el.style.left='50%';el.style.top='30%';
+    el.style.transform='translateX(-50%)';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),1300);
+  },300);
+
+  setSpeech('PATO',rand([
+    `QUACK DE APROVAÇÃO! "${task.name}" feita! +${coinsEarned}🪙 🏆`,
+    `Passou pelo interrogatório! +${coinsEarned}🪙 Orgulho de pato! 🦆`,
+    `"${task.name}" concluída! Você ganhou ${coinsEarned} moedinhas! 🪙`,
+  ]));
+}
+
+function checkSkinUnlocks(){
+  const total=gameState.completedTotal;
+  SKINS.forEach(skin=>{
+    if(skin.unlockAt&&total>=skin.unlockAt&&!gameState.unlockedSkins.includes(skin.id)){
+      gameState.unlockedSkins.push(skin.id);
+      setTimeout(()=>{
+        setSpeech('PATO',`NOVA SKIN DESBLOQUEADA: ${skin.name}! 🎉 Vai em Skins pra equipar!`);
+      },1500);
+    }
+  });
 }
 
 function closeModal(){
@@ -655,24 +797,105 @@ document.getElementById('modalInput').addEventListener('keydown',e=>{
   if(e.key==='Enter'){const btn=document.querySelector('#modalBtns .btn-confirm');if(btn&&!btn.disabled)btn.click();}
 });
 
+// ====== SKINS MENU ======
+function openSkins(){
+  renderSkinsGrid();
+  document.getElementById('skinsOverlay').classList.add('open');
+}
+function closeSkins(){document.getElementById('skinsOverlay').classList.remove('open');}
+
+function renderSkinsGrid(){
+  const grid=document.getElementById('skinsGrid');
+  grid.innerHTML='';
+  SKINS.forEach(skin=>{
+    const owned=gameState.unlockedSkins.includes(skin.id)||skin.free;
+    const active=gameState.activeSkin===skin.id;
+    const card=document.createElement('div');
+    card.className='skin-card'+(active?' active':'')+((!owned)?' locked-skin':'');
+
+    const cv=document.createElement('canvas');
+    cv.width=9*3;cv.height=8*3;
+    drawDuckWithSkin(cv,skin,3);
+    cv.style.width='40px';cv.style.height='40px';
+
+    let actionHtml='';
+    if(active){
+      actionHtml=`<div class="skin-unlocked-badge">✅</div>`;
+    }else if(owned){
+      actionHtml=`<button class="pixel-btn btn-yes" style="font-size:0.3rem;padding:4px 6px;" onclick="equipSkin('${skin.id}')">USAR</button>`;
+    }else if(skin.unlockAt){
+      actionHtml=`<div class="skin-price">🏆${skin.unlockAt} tasks</div>`;
+    }else{
+      actionHtml=`<button class="pixel-btn btn-coin" style="font-size:0.3rem;padding:4px 6px;" onclick="buySkin('${skin.id}')">${skin.desc}</button>`;
+    }
+
+    card.innerHTML=`<div class="skin-label">${skin.name}</div>`;
+    card.insertBefore(cv,card.firstChild);
+    card.innerHTML+=actionHtml;
+    card.insertBefore(cv,card.firstChild);
+    grid.appendChild(card);
+  });
+}
+
+function equipSkin(id){
+  gameState.activeSkin=id;saveGame();
+  refreshAllDucks();renderSkinsGrid();
+  const skin=SKINS.find(s=>s.id===id);
+  setSpeech('PATO',`Skin "${skin.name}" equipada! Tô estiloso! 🦆✨`);
+}
+
+function buySkin(id){
+  const skin=SKINS.find(s=>s.id===id);
+  if(!skin)return;
+  if(gameState.coins<skin.price){
+    setSpeech('PATO',`Moedinhas insuficientes! Você tem ${gameState.coins}🪙, precisa de ${skin.price}🪙. Vai completar tarefas! 🦆`);
+    closeSkins();return;
+  }
+  gameState.coins-=skin.price;
+  gameState.unlockedSkins.push(id);
+  gameState.activeSkin=id;
+  saveGame();updateCoinsDisplay();refreshAllDucks();renderSkinsGrid();
+  const skin2=SKINS.find(s=>s.id===id);
+  setSpeech('PATO',`"${skin2.name}" comprada e equipada! Gastou ${skin.price}🪙. Valeu a pena! 🦆`);
+}
+
 // ====== IDLE ======
-const IDLE=[['duck','PATO','Tô de olho. Sempre. 👁️ Quack.'],['crawd','CRAWD','MONITORANDO. A IA detecta mentiras. Cuidado.'],['duck','PATO','Cada tarefa ignorada faz o Pato chorar. QUACK!'],['crawd','CRAWD','Quanto mais contexto você der, mais difícil fica. Dica do Crawd.'],['duck','PATO','Vai lá fazer algo! Eu fico aqui... olhando. 👀'],['crawd','CRAWD','Respostas vagas são reprovadas automaticamente. Aviso dado.'],['duck','PATO','Beba água. Depois faz a tarefa. Nessa ordem. 💧']];
+const IDLE=[
+  'Tô de olho. Sempre. 👁️ Quack.',
+  'Complete tarefas pra ganhar moedinhas! 🪙',
+  'Já tem skins novas esperando por você no 🎨 SKINS!',
+  'Cada tarefa = moedinhas = skins novas. É simples. 🦆',
+  'Vai lá fazer algo! Eu fico aqui... olhando. 👀',
+  'Beba água. Depois faz a tarefa. Nessa ordem. 💧',
+  'O interrogatório tá esperando. Tô pronto. 🦆',
+];
 let idleIdx=0;
-setInterval(()=>{if(!document.getElementById('modalOverlay').classList.contains('open')){const[t,n,txt]=IDLE[idleIdx%IDLE.length];setSpeech(t,n,txt);idleIdx++;}},8000);
+setInterval(()=>{
+  if(!document.getElementById('modalOverlay').classList.contains('open')&&!document.getElementById('skinsOverlay').classList.contains('open')){
+    setSpeech('PATO',IDLE[idleIdx%IDLE.length]);idleIdx++;
+  }
+},8000);
 
 // ====== CONFETTI ======
 function confetti(){
   const cols=['#D4674A','#FFD700','#5bc8e8','#6deca0','#ff5c5c','#f5d76e'];
-  for(let i=0;i<28;i++)setTimeout(()=>{const el=document.createElement('div');el.className='confetti';el.style.left=Math.random()*100+'vw';el.style.top=(10+Math.random()*50)+'vh';el.style.background=rand(cols);el.style.animationDuration=(0.7+Math.random()*0.7)+'s';document.body.appendChild(el);setTimeout(()=>el.remove(),1500);},i*40);
+  for(let i=0;i<28;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='confetti';
+    el.style.left=Math.random()*100+'vw';el.style.top=(10+Math.random()*50)+'vh';
+    el.style.background=rand(cols);el.style.animationDuration=(0.7+Math.random()*0.7)+'s';
+    document.body.appendChild(el);setTimeout(()=>el.remove(),1500);
+  },i*40);
 }
 
 // ====== PWA ======
 let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('installBanner').classList.add('show');});
-document.getElementById('installBtn').addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;deferredPrompt=null;document.getElementById('installBanner').classList.remove('show');if(outcome==='accepted')setSpeech('duck','PATO','INSTALADO! Sem desculpas agora! 🦆');});
+document.getElementById('installBtn').addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;deferredPrompt=null;document.getElementById('installBanner').classList.remove('show');if(outcome==='accepted')setSpeech('PATO','INSTALADO! Sem desculpas agora! 🦆');});
 document.getElementById('closeBanner').addEventListener('click',()=>document.getElementById('installBanner').classList.remove('show'));
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
+// ====== INIT ======
+updateCoinsDisplay();
 render();
 </script>
 </body>
