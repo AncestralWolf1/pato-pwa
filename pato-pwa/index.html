@@ -424,11 +424,11 @@ function handlePhoto(e){
 // ====== AI QUESTION GENERATION ======
 async function generateQuestionsAI(task){
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch('/.netlify/functions/claude',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
+        model:'llama-3.3-70b-versatile',
         max_tokens:500,
         system:`Você é o Crawd, um caranguejo pixel art extremamente desconfiado e rigoroso. Sua missão é criar perguntas que APENAS alguém que realmente fez a tarefa consegue responder corretamente. As perguntas devem ser sobre detalhes concretos e observáveis da tarefa — coisas que não dá pra inventar sem ter feito. Evite perguntas sobre sentimentos, opiniões ou coisas que qualquer um pode chutar. Foque em detalhes físicos, sensoriais, sequenciais.
 
@@ -534,11 +534,11 @@ function retryQuestion(idx){
 // ====== AI: CHECK ANSWER ======
 async function checkAnswerAI(task,question,answer,qIdx){
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch('/.netlify/functions/claude',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
+        model:'llama-3.3-70b-versatile',
         max_tokens:200,
         system:`Você é o Crawd, um detector de mentiras implacável. Seu trabalho é identificar respostas IMPOSSÍVEIS ou ABSURDAS para a tarefa em questão. Você é especialista em pegar procrastinadores tentando trapacear.
 
@@ -581,11 +581,11 @@ async function runFinalVerdict(){
   const answersText=quizData.map((q,i)=>`P${i+1}: ${q.pergunta}\nR: ${q.resposta||'(sem resposta)'}`).join('\n\n');
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch('/.netlify/functions/claude',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
+        model:'llama-3.3-70b-versatile',
         max_tokens:300,
         system:`Você é o Pato e o Crawd fazendo o julgamento final e DEFINITIVO. Sua missão é detectar procrastinadores tentando trapacear.
 
