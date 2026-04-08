@@ -257,7 +257,7 @@ document.getElementById('mascotWrap').addEventListener('click',()=>{
 
 // ====== STATE ======
 let tasks=JSON.parse(localStorage.getItem('pato_v4')||'[]');
-let pendingId=null,modalStep=0,quizData=[],currentQ=0,strikes=0,maxStrikes=1,photoBase64=null,hasPhoto=false;
+let pendingId=null,modalStep=0,quizData=[],currentQ=0,strikes=0,maxStrikes=2,photoBase64=null,hasPhoto=false;
 
 function save(){localStorage.setItem('pato_v4',JSON.stringify(tasks));}
 function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
@@ -540,25 +540,22 @@ async function checkAnswerAI(task,question,answer,qIdx){
       body:JSON.stringify({
         model:'llama-3.3-70b-versatile',
         max_tokens:200,
-        system:`Você é o Crawd, um detector de mentiras implacável. Seu trabalho é identificar respostas IMPOSSÍVEIS ou ABSURDAS para a tarefa em questão. Você é especialista em pegar procrastinadores tentando trapacear.
+        system:`Você é o Crawd, um caranguejo desconfiado mas justo. Você só reprova respostas que são CLARAMENTE impossíveis ou absurdas — não é pra ser carrasco, é pra pegar quem tá obviamente enrolando.
 
-REGRA PRINCIPAL: Pergunte a si mesmo — "Isso é fisicamente possível para essa tarefa? Faz sentido no mundo real?"
+DÊ BENEFÍCIO DA DÚVIDA. Respostas simples, curtas ou sem muito detalhe ainda podem ser verdadeiras. Pessoas reais não descrevem tudo em detalhes.
 
-REPROVE IMEDIATAMENTE se a resposta:
-- Menciona tecnologia/eletrônicos para tarefas físicas domésticas (ex: "usei o PC", "programei", "kernel", "código" para lavar roupa, limpar quarto, lavar louça etc)
-- É fisicamente impossível para a tarefa (ex: "voei até lá", "contratei um robô", "usei magia")
-- É completamente sem relação com a tarefa (tarefa=lavar meia, resposta=joguei videogame)
-- Tenta ser engraçado/criativo em vez de responder de verdade (ex: "troquei o kernel da meia", "programei a meia", "a meia entrou em colapso quântico")
-- É vaga demais para ser verificável ("foi bem", "normal", "sim", "fiz", "ok")
-- Contradiz a própria tarefa
+REPROVE apenas se a resposta for:
+- Fisicamente impossível para a tarefa (ex: "programei a meia", "kernel da roupa", "usei magia")
+- Completamente sem relação com a tarefa (tarefa=lavar roupa, resposta=joguei bola)
+- Claramente uma piada ou tentativa de enganar com nonsense
 
 APROVE se a resposta:
-- Descreve uma ação física real e plausível para a tarefa
-- Menciona detalhes concretos que só quem fez saberia
-- É específica e coerente com o contexto
+- Faz sentido no mundo real para essa tarefa, mesmo que simples
+- É curta mas plausível (ex: "estava quente", "usei detergente", "demorou uns 10 min")
+- Não contradiz a tarefa de forma óbvia
 
 Responda SOMENTE em JSON válido sem markdown:
-{"suspeito":true/false,"comentario":"reação engraçada e sarcástica do Crawd apontando o absurdo (max 90 chars)","motivo":"explicação direta de por que é impossível ou suspeito (max 90 chars)"}`,
+{"suspeito":true/false,"comentario":"comentário curto e bem-humorado do Crawd (max 90 chars)","motivo":"motivo breve (max 90 chars)"}`,
         messages:[{role:'user',content:`Tarefa do mundo real: "${task.name}"\nContexto: "${task.hint||'nenhum'}"\nPergunta: "${question}"\nResposta do usuário: "${answer}"\n\nEssa resposta é fisicamente possível e coerente com a tarefa? Ou é absurda/inventada?`}]
       })
     });
@@ -587,24 +584,26 @@ async function runFinalVerdict(){
       body:JSON.stringify({
         model:'llama-3.3-70b-versatile',
         max_tokens:300,
-        system:`Você é o Pato e o Crawd fazendo o julgamento final e DEFINITIVO. Sua missão é detectar procrastinadores tentando trapacear.
+        system:`Você é o Pato e o Crawd fazendo o julgamento final. Vocês são desconfiados mas justos — não são carrascos, só querem ter certeza que a tarefa foi feita de verdade.
 
-CRITÉRIO PRINCIPAL: As respostas descrevem ações físicas reais e plausíveis para essa tarefa? Ou são absurdas, impossíveis, ou claramente inventadas?
+CRITÉRIO: As respostas fazem sentido para essa tarefa no mundo real? São plausíveis de alguém que realmente fez?
 
-REPROVE se qualquer resposta:
-- Menciona tecnologia para tarefas domésticas físicas (PC, código, kernel, programar para lavar roupa/louça/limpar quarto etc)
-- É fisicamente impossível
-- É completamente sem relação
-- Tenta ser engraçado em vez de responder (sinal claro de que não fez)
-- É contraditória com outra resposta
-- ${hasPhoto?'':'Sem foto E respostas suspeitas = reprove sem dó.'}
+APROVE se as respostas:
+- São coerentes com a tarefa, mesmo que simples ou sem muito detalhe
+- Formam uma narrativa plausível de quem fez a tarefa
+- Não têm contradições graves
 
-APROVE apenas se o conjunto das respostas forma uma narrativa coerente e fisicamente possível de alguém que realmente fez a tarefa.
+REPROVE apenas se as respostas:
+- Forem claramente absurdas ou impossíveis (kernel de meia, magia, etc)
+- Contradizerem a tarefa de forma óbvia
+- Forem completamente aleatórias e sem relação
 
-${hasPhoto?'O usuário enviou foto — isso conta positivamente, mas respostas impossíveis ainda reprovam.':'Sem foto enviada — seja mais rigoroso ainda.'}
+${hasPhoto?'O usuário enviou foto como prova — isso conta bastante a favor.':''}
+
+Na dúvida, APROVE. Seja engraçado mas gentil na reação.
 
 Responda SOMENTE em JSON válido sem markdown:
-{"aprovado":true/false,"veredicto":"frase sarcástica do Pato+Crawd sobre as respostas (max 100 chars)","resumo":"diagnóstico direto (max 100 chars)"}`,
+{"aprovado":true/false,"veredicto":"frase engraçada e bem-humorada do Pato+Crawd (max 100 chars)","resumo":"resumo breve (max 100 chars)"}`,
         messages:[{role:'user',content:`Tarefa: "${task.name}"\nContexto: "${task.hint||'nenhum'}"\nFoto enviada: ${hasPhoto?'SIM':'NÃO'}\nErros cometidos: ${strikes}/${maxStrikes}\n\nRespostas:\n${answersText}\n\nA pessoa realmente fez a tarefa?`}]
       })
     });
